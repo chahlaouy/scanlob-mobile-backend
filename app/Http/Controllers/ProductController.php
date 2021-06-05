@@ -13,8 +13,21 @@ class ProductController extends Controller
      *@param  int  $per_page
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if( $request['keyword']){
+
+            // [strtolower('%'.$district . '%')] turn the word into lower case
+            $products= Product::where('name', 'like', "%{$request['keyword']}%")->select('id', 'name')->take(5)->get();
+            if( $products->count() === 0 ){
+                return response()->json(['message' => 'aucune resultat']);
+            }
+            return $products->pluck('name');
+        }
+        if( $request['popular']){
+            return Product::orderBy('replies_count', 'desc')->take(2)->get();
+        }
+
         return Product::all();
     }
 
@@ -47,7 +60,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        return Product::where('id', $id)->first();
     }
 
     /**

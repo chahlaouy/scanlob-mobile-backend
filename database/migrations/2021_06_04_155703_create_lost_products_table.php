@@ -19,6 +19,7 @@ class CreateLostProductsTable extends Migration
             $table->foreignId('qrcode_id')->nullable();
             $table->string('img_urls');
             $table->json('location');
+            $table->boolean('founded')->default(false);
             $table->string('message');
             $table->foreignId('category_id');
             $table->foreignId('user_id');

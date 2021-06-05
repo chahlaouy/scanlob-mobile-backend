@@ -2,20 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
+use App\Models\LostProduct;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
-class CommentController extends Controller
+class HomeController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($product)
+    public function index(Request $request)
     {
-        return Product::where('id', $product)->firstOrFail()->comments;
+       $popularProd =  Product::orderBy('comments_count', 'desc')->take(2)->get();
+       $recentProduct = Product::orderBy('updated_at', 'desc')->take(2)->get();
+       $lostProduct = LostProduct::orderBy('updated_at', 'desc')->take(2)->get();
+
+       return [
+            'popularProd' => $popularProd,
+            'recentProduct' => $recentProduct,
+            'lostProduct' => $lostProduct,
+       ];
     }
 
     /**
@@ -23,20 +31,9 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($product)
+    public function create()
     {
-        $product = Product::where('id', $product)->firstOrFail();
-        
-        $comment = $product->comments()->create([
-            'body' => 'test comment',
-            'user_id' => 1,
-        ]);
-
-        if( $comment ){
-            return response()->json(['success' => 'Votre commentaire a été bien ajouter']);
-        }
-
-        return response()->json(['error' => "Il y'avait une erreur s'il vous plait essayer plus tard"]);
+        //
     }
 
     /**
@@ -53,10 +50,10 @@ class CommentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Comment  $comment
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Comment $comment)
+    public function show($id)
     {
         //
     }
@@ -64,10 +61,10 @@ class CommentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Comment  $comment
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Comment $comment)
+    public function edit($id)
     {
         //
     }
@@ -76,10 +73,10 @@ class CommentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Comment  $comment
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -87,10 +84,10 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Comment  $comment
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Comment $comment)
+    public function destroy($id)
     {
         //
     }

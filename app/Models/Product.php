@@ -9,56 +9,87 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected static function boot(){
+    protected $guarded = [];
+
+    protected static function boot()
+    {
 
         parent::boot();
 
-        // static::addGlobalScope('replyCount', function($builder){
-        //     $builder->withCount('replies');
-        // });
-        static::addGlobalScope('owner', function($builder){
+        static::addGlobalScope('commentCount', function ($builder) {
+            $builder->withCount('comments');
+        });
+        static::addGlobalScope('likesCount', function ($builder) {
+            $builder->withCount('favorites');
+        });
+        static::addGlobalScope('owner', function ($builder) {
             $builder->with('owner');
         });
-        static::addGlobalScope('category', function($builder){
+
+        static::addGlobalScope('comments', function ($builder) {
+            $builder->with('comments');
+        });
+
+        static::addGlobalScope('category', function ($builder) {
             $builder->with('category');
         });
-        static::addGlobalScope('qrcode', function($builder){
+
+        static::addGlobalScope('qrcode', function ($builder) {
             $builder->with('qrcode');
         });
-
     }
 
-    public function owner(){
+    public function owner()
+    {
 
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function category(){
+    public function category()
+    {
 
         return $this->belongsTo(Category::class);
     }
 
-    public function qrcode(){
+    public function qrcode()
+    {
 
         return $this->hasOne(Qrcode::class);
     }
 
-    public function comments(){
+    public function comments()
+    {
 
         return $this->hasMany(Comment::class);
     }
 
-    public function favorites(){ 
+    public function favorites()
+    {
 
         return $this->morphMany(Favorite::class, 'favorited');
     }
 
-    public function favorite(){
+    public function favorite()
+    {
 
-        if(! $this->where('user_id', auth()->id())->first())
-            $this->favorites()
-                    ->create([
-                        'user_id'  => auth()->id()
-                    ]);
+        if ( ! $this->favorites()->where('user_id', 1)->first() ){
+            return $this->favorites()
+                ->create([
+                    'user_id'  => 1 //auth()->id()
+                ]);
+        }else{
+
+            return $this->unfavorite();
+        }
+
+        // return $this->favorites()
+        //         ->create([
+        //             'user_id'  => 1 //auth()->id()
+        //         ]);
+    }
+    public function unfavorite()
+    {
+        $this->favorites()->where('favorited_id', $this->id)->delete();
+        
     }
 }

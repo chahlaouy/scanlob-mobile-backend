@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Favorite;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
@@ -17,6 +19,31 @@ class FavoriteController extends Controller
         //
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function favoriteProduct($product)
+    {
+        $product = Product::where('id', $product)->firstOrfail();
+
+        return $product->favorite();
+
+        //  Product::where('id', $product)->firstOrfail();
+
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function favoriteComment($product, $comment)
+    {
+        //
+    }
+
+    
     /**
      * Show the form for creating a new resource.
      *

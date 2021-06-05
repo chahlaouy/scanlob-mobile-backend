@@ -17,12 +17,12 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->string('description');
             $table->float('price');
             $table->integer('quantity');
             $table->json('img_urls')->nullable();
             $table->foreignId('user_id');
             $table->foreignId('category_id');
-            $table->boolean('founded')->default(false);
             $table->timestamps();
         });
     }
