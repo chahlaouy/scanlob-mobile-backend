@@ -18,17 +18,18 @@ class ProductController extends Controller
         if( $request['keyword']){
 
             // [strtolower('%'.$district . '%')] turn the word into lower case
-            $products= Product::where('name', 'like', "%{$request['keyword']}%")->select('id', 'name')->take(5)->get();
+            // $products= Product::where('name', 'like', "%{$request['keyword']}%")->select('id', 'name')->take(5)->get();
+            $products= Product::where('name', 'like', "%{$request['keyword']}%")->get();
             if( $products->count() === 0 ){
-                return response()->json(['message' => 'aucune resultat']);
+                return [];
             }
-            return $products->pluck('name');
+            return $products;
         }
         if( $request['popular']){
             return Product::orderBy('replies_count', 'desc')->take(2)->get();
         }
 
-        return Product::all();
+        return Product::paginate(15);
     }
 
     /**
@@ -38,7 +39,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
